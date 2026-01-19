@@ -1,7 +1,19 @@
 {
+  "name": "gis-census",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "body-parser": "^2.2.2",
+    "config": "^4.2.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -14,5 +26,8 @@
     "swagger-ui-express": "^5.0.1",
     "winston": "^3.19.0",
     "wkx": "^0.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.11"
   }
 }
