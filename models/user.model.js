@@ -32,15 +32,17 @@ const userSchema = new mongoose.Schema({
     isAdmin: {
         type: Boolean,
         default: false
+    },
+    refreshToken: {
+        type: String
     }
 });
 
 
-userSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign({ _id: this._id, isAdmin: this.isAdmin, code: this.code }, process.env.JWT_PRIVATE_KEY, 
-  {expiresIn: '24h'}
-  );
-  return token;
+userSchema.methods.generateTokens = function () {
+    const accessToken = jwt.sign({ _id: this._id, isAdmin: this.isAdmin, code: this.code }, process.env.JWT_PRIVATE_KEY, { expiresIn: '15m' });
+    const refreshToken = jwt.sign({ _id: this._id }, process.env.JWT_REFRESH_KEY, { expiresIn: '7d' });
+    return { accessToken, refreshToken };
 }
 
 const User = mongoose.model('User', userSchema);

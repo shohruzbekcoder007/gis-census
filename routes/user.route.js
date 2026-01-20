@@ -32,9 +32,10 @@ const router = express.Router();
  */
 router.post('/login', userController.login);
 
+
 /**
  * @swagger
- * /api/users/token:
+ * /api/users/refresh:
  *   post:
  *     summary: Yangi token olish
  *     tags: [Users]
@@ -53,7 +54,7 @@ router.post('/login', userController.login);
  *       401:
  *         description: Token yaroqsiz
  */
-router.post('/token', userController.getToken);
+router.post('/refresh', userController.refreshToken);
 
 /**
  * @swagger
