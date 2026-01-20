@@ -1,6 +1,7 @@
 {
   "name": "gis-census",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "dev": "nodemon index.js",
@@ -20,6 +21,7 @@
     "express": "^5.2.1",
     "joi": "^18.0.2",
     "jsonwebtoken": "^9.0.3",
+    "lodash": "^4.17.21",
     "mongoose": "^9.1.4",
     "pg": "^8.17.1",
     "swagger-jsdoc": "^6.2.8",
