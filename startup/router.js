@@ -4,6 +4,7 @@ import cors from 'cors'
 import cookieParser from "cookie-parser"
 // import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv';
+import userRouter from '../routes/user.route.js'
 
 dotenv.config();
 
@@ -27,6 +28,8 @@ export default (app) => {
     app.get('/', (_, res) => {
         res.send('Hello World!');
     });
+
+    app.use('/api/users', userRouter);
 
     
 }
