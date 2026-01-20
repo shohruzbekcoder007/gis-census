@@ -1,10 +1,9 @@
 import express from 'express'
 import cors from 'cors'
-// import bodyParser from 'body-parser'
 import cookieParser from "cookie-parser"
-// import swaggerUi from 'swagger-ui-express'
 import dotenv from 'dotenv';
 import userRouter from '../routes/user.route.js'
+import { swaggerUi, specs } from './swagger.js'
 
 dotenv.config();
 
@@ -31,5 +30,6 @@ export default (app) => {
 
     app.use('/api/users', userRouter);
 
-    
+    // Swagger UI
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 }
