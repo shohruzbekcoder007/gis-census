@@ -12,7 +12,7 @@ dotenv.config({ path: join(__dirname, '..', '.env') });
 const pool = new Pool({
     user: process.env.PG_USER || 'gis_user',
     host: process.env.PG_HOST || '172.16.8.76',
-    database: process.env.PG_DATABASE || 'gis_db',
+    database: process.env.PG_DATABASE || 'survey_gis_data',
     password: process.env.PG_PASSWORD,
     port: process.env.PG_PORT || 5432,
     max: 20, // maksimal connection pool hajmi

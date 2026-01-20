@@ -4,22 +4,35 @@ async function checkPostgres() {
     try {
         console.log('PostgreSQL ulanishini tekshirish...\n');
 
-        // Oddiy query
+        // Server vaqti
         const timeResult = await pool.query('SELECT NOW() as server_time');
         console.log('Server vaqti:', timeResult.rows[0].server_time);
 
-        // Admin jadvalidan ma'lumot olish
-        const result = await pool.query('SELECT COUNT(*) as count FROM admin.v_admin_lvl_2');
-        console.log('admin.v_admin_lvl_2 jadvaldagi yozuvlar soni:', result.rows[0].count);
+        // Barcha tablelar ro'yxati
+        const tablesQuery = `
+            SELECT
+                table_schema,
+                table_name,
+                table_type
+            FROM information_schema.tables
+            WHERE table_schema NOT IN ('pg_catalog', 'information_schema')
+            ORDER BY table_schema, table_name
+        `;
+        const tables = await pool.query(tablesQuery);
 
-        // Namuna ma'lumotlar
-        const sample = await pool.query('SELECT id, code, name_uz FROM admin.v_admin_lvl_2 LIMIT 5');
-        console.log('\nNamuna ma\'lumotlar:');
-        sample.rows.forEach(row => {
-            console.log(`  - ${row.id}: ${row.code} - ${row.name_uz}`);
+        console.log(`\nJami ${tables.rows.length} ta table/view topildi:\n`);
+
+        let currentSchema = '';
+        tables.rows.forEach(row => {
+            if (currentSchema !== row.table_schema) {
+                currentSchema = row.table_schema;
+                console.log(`\n[${currentSchema}]`);
+            }
+            const type = row.table_type === 'VIEW' ? '(VIEW)' : '';
+            console.log(`  - ${row.table_name} ${type}`);
         });
 
-        console.log('\nPostgreSQL ulanishi muvaffaqiyatli!');
+        console.log('\n\nPostgreSQL ulanishi muvaffaqiyatli!');
         process.exit(0);
     } catch (error) {
         console.error('PostgreSQL xatosi:', error.message);
