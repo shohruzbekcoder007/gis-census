@@ -63,7 +63,7 @@ router.post('/refresh', userController.refreshToken);
  *     summary: Foydalanuvchi ma'lumotlarini olish
  *     tags: [Users]
  *     security:
- *       - bearerAuth: []
+ *       - xAuthToken: []
  *     responses:
  *       200:
  *         description: Foydalanuvchi ma'lumotlari

@@ -3,6 +3,7 @@ import cors from 'cors'
 import cookieParser from "cookie-parser"
 import dotenv from 'dotenv';
 import userRouter from '../routes/user.route.js'
+import adminArea from '../routes/adminarea.route.js'
 import { swaggerUi, specs } from './swagger.js'
 
 dotenv.config();
@@ -29,6 +30,7 @@ export default (app) => {
     });
 
     app.use('/api/users', userRouter);
+    app.use('/api/adminarea', adminArea);
 
     // Swagger UI
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));

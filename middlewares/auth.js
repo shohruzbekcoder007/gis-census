@@ -14,6 +14,9 @@ export default function auth(req, res, next) {
         next();
     }
     catch (ex) {
-        return res.status(400).send('Yaroqsiz token');
+        if (ex.name === 'TokenExpiredError') {
+            return res.status(401).send('Token muddati tugagan');
+        }
+        return res.status(401).send('Yaroqsiz token');
     }
 }

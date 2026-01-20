@@ -14,13 +14,17 @@ const options = {
                 url: 'http://localhost:8080',
                 description: 'Development server',
             },
+            {
+                url: 'http://172.16.8.38:8080',
+                description: 'Development server for other devices',
+            },
         ],
         components: {
             securitySchemes: {
-                bearerAuth: {
-                    type: 'http',
-                    scheme: 'bearer',
-                    bearerFormat: 'JWT',
+                xAuthToken: {
+                    type: 'apiKey',
+                    name: 'x-auth-token',
+                    in: 'header',
                 },
             },
         },
