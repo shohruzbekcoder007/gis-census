@@ -20,7 +20,8 @@ const TargetSchema = new mongoose.Schema({
     position: {
         type: String,
         required: true,
-        enum: ['ijtimoiy_hodim', 'inspektor', 'hokim_yordamchisi', 'xotin_qizlar', 'yoshlar', 'soliq', 'rais']
+        enum: ['ijtimoiy_hodim', 'inspektor', 'hokim_yordamchisi', 'xotin_qizlar', 'yoshlar', 'soliq', 'rais', 'boshqa'],    
+        default: 'boshqa'
     },
     target: {
         type: Number,
