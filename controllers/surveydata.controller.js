@@ -1,4 +1,4 @@
-import SurveyData from "../models/surveydata.model";
+import SurveyData from "../models/surveydata.model.js";
 
 const surveyDataController = {
 
@@ -49,3 +49,5 @@ const surveyDataController = {
         }
     }
 };
+
+export default surveyDataController;

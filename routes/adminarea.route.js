@@ -1,5 +1,6 @@
 import express from 'express';
 import adminAreaController from '../controllers/adminarea.controller.js';
+import auth from '../middlewares/auth.js';
 
 const router = express.Router();
 
@@ -37,7 +38,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.get('/geometry', adminAreaController.getGeometry);
+router.get('/geometry', auth, adminAreaController.getGeometry);
 
 /**
  * @swagger
@@ -78,7 +79,7 @@ router.get('/geometry', adminAreaController.getGeometry);
  *       500:
  *         description: Server error
  */
-router.get('/by-level', adminAreaController.getByLevel);
+router.get('/by-level', auth, adminAreaController.getByLevel);
 
 /**
  * @swagger
@@ -118,7 +119,7 @@ router.get('/by-level', adminAreaController.getByLevel);
  *       500:
  *         description: Server error
  */
-router.get('/children', adminAreaController.getChildren);
+router.get('/children', auth, adminAreaController.getChildren);
 
 /**
  * @swagger
@@ -147,7 +148,7 @@ router.get('/children', adminAreaController.getChildren);
  *       500:
  *         description: Server error
  */
-router.get('/hierarchy', adminAreaController.getHierarchy);
+router.get('/hierarchy', auth, adminAreaController.getHierarchy);
 
 /**
  * @swagger
@@ -188,7 +189,7 @@ router.get('/hierarchy', adminAreaController.getHierarchy);
  *       500:
  *         description: Server error
  */
-router.get('/search', adminAreaController.search);
+router.get('/search', auth, adminAreaController.search);
 
 /**
  * @swagger
@@ -228,6 +229,52 @@ router.get('/search', adminAreaController.search);
  *       500:
  *         description: Server error
  */
-router.get('/regions', adminAreaController.getRegions);
+router.get('/regions', auth, adminAreaController.getRegions);
+
+/**
+ * @swagger
+ * /api/adminarea/polygon/{code}:
+ *   get:
+ *     summary: Code bo'yicha mahalla polygon ma'lumotini olish
+ *     tags: [AdminArea]
+ *     security:
+ *       - xAuthToken: []
+ *     parameters:
+ *       - in: path
+ *         name: code
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Admin area kodi
+ *     responses:
+ *       200:
+ *         description: Mahalla polygon ma'lumotlari
+ *       500:
+ *         description: Server xatosi
+ */
+router.get('/polygon/:code', auth, adminAreaController.getMahhallaPolygonByCode);
+
+/**
+ * @swagger
+ * /api/adminarea/polygons/{code}:
+ *   get:
+ *     summary: Code bo'yicha bolalar mahallalar polygonlarini olish
+ *     tags: [AdminArea]
+ *     security:
+ *       - xAuthToken: []
+ *     parameters:
+ *       - in: path
+ *         name: code
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Ota admin area kodi
+ *     responses:
+ *       200:
+ *         description: Bolalar mahallalar polygonlari ro'yxati
+ *       500:
+ *         description: Server xatosi
+ */
+router.get('/polygons/:code', auth, adminAreaController.getMahhallasPolygonByCode);
 
 export default router;

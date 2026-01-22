@@ -322,6 +322,39 @@ const adminAreaController = {
                 details: err.message
             });
         }
+    },
+
+    // GET /mahalla/:code/polygon - Ma'lum bir mahalla kodi bo'yicha polygon olish
+    getMahhallaPolygonByCode: async (req, res) => {
+        try {
+            const code = req.params.code;
+            const mahalla = await AdminArea.findOne({ code: code }).select('geometry centroid bounding_box code name_uz name_ru name_en parent_id admin_level');
+            return res.json(mahalla);
+        } catch (err) {
+            console.error(err);  
+            return res.status(500).json({
+                error: 'Xatolik yuzaga keldi',
+                details: err.message
+            });
+        }
+    },
+
+    // GET /mahalla/:code/children-polygons - Ma'lum bir mahalla kodi bo'yicha bolalar hududlarining polygonlarini olish
+    getMahhallasPolygonByCode: async (req, res) => {
+        try {
+            const code = req.params.code;
+            const mahalla = await AdminArea.findOne({ code: code });
+            const parent_id = mahalla.id;
+            const admin_level = mahalla.admin_level;
+            const mahallas = await AdminArea.find({ parent_id: parent_id , admin_level: admin_level + 1}).select('geometry centroid bounding_box code name_uz name_ru name_en parent_id admin_level');
+            return res.json(mahallas);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({
+                error: 'Xatolik yuzaga keldi',
+                details: err.message
+            });
+        }
     }
 };
 

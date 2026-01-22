@@ -57,30 +57,16 @@ const adminAreaSchema = new mongoose.Schema({
         default: null
     },
     geometry: {
-        type: {
-            type: String,
-            enum: ['MultiPolygon', 'Polygon'],
-            default: 'MultiPolygon'
-        },
-        coordinates: {
-            type: mongoose.Schema.Types.Mixed, // Array structure for GeoJSON
-            default: null
-        }
+        type: String, // GeoJSON string format
+        default: null
     },
     centroid: {
-        type: String, // WKB hex format
+        type: String, // GeoJSON string format
         default: null
     },
     bounding_box: {
-        type: {
-            type: String,
-            enum: ['Polygon'],
-            default: 'Polygon'
-        },
-        coordinates: {
-            type: mongoose.Schema.Types.Mixed, // Array structure for GeoJSON
-            default: null
-        }
+        type: String, // GeoJSON string format
+        default: null
     },
     total_area_hectares: {
         type: Number,
@@ -160,7 +146,6 @@ adminAreaSchema.index({ parent_id: 1, active: 1 }); // Optimized for children qu
 adminAreaSchema.index({ admin_level: 1, parent_id: 1 }); // Combined level and parent queries
 adminAreaSchema.index({ active: 1, admin_level: 1 }); // Active + level filtering
 adminAreaSchema.index({ name_uz: 'text', name_ru: 'text', name_en: 'text' }); // Full-text search
-adminAreaSchema.index({ 'geometry.type': 1 }); // For geometry type queries
 adminAreaSchema.index({ iso_code: 1 }); // For ISO code lookups
 
 // Virtual for getting children

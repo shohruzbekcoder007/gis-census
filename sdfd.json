@@ -1,0 +1,102 @@
+[{
+ "region_code": "1730",
+ "region_name": "Fargʻona viloyati",
+ "daily_count": 34563,
+ "cumulative_count": 335334
+},{
+ "region_code": "1730203",
+ "region_name": "Oltiariq tumani",
+ "daily_count": 1545,
+ "cumulative_count": 15566
+},{
+ "region_code": "1730206",
+ "region_name": "Qo‘shtepa tumani",
+ "daily_count": 2395,
+ "cumulative_count": 17632
+},{
+ "region_code": "1730209",
+ "region_name": "Bog‘dod tumani",
+ "daily_count": 1498,
+ "cumulative_count": 16418
+},{
+ "region_code": "1730212",
+ "region_name": "Buvayda tumani",
+ "daily_count": 1526,
+ "cumulative_count": 17002
+},{
+ "region_code": "1730215",
+ "region_name": "Beshariq tumani",
+ "daily_count": 2200,
+ "cumulative_count": 25960
+},{
+ "region_code": "1730218",
+ "region_name": "Quva tumani",
+ "daily_count": 2021,
+ "cumulative_count": 22844
+},{
+ "region_code": "1730221",
+ "region_name": "Uchko‘prik tumani",
+ "daily_count": 1916,
+ "cumulative_count": 16835
+},{
+ "region_code": "1730224",
+ "region_name": "Rishton tumani",
+ "daily_count": 1933,
+ "cumulative_count": 19443
+},{
+ "region_code": "1730226",
+ "region_name": "So‘x tumani",
+ "daily_count": 67,
+ "cumulative_count": 1528
+},{
+ "region_code": "1730227",
+ "region_name": "Toshloq tumani",
+ "daily_count": 2111,
+ "cumulative_count": 16802
+},{
+ "region_code": "1730230",
+ "region_name": "O‘zbekiston tumani",
+ "daily_count": 2509,
+ "cumulative_count": 20825
+},{
+ "region_code": "1730233",
+ "region_name": "Farg‘ona tumani",
+ "daily_count": 1722,
+ "cumulative_count": 19787
+},{
+ "region_code": "1730236",
+ "region_name": "Dang‘ara tumani",
+ "daily_count": 1560,
+ "cumulative_count": 14846
+},{
+ "region_code": "1730238",
+ "region_name": "Furqat tumani",
+ "daily_count": 1071,
+ "cumulative_count": 11953
+},{
+ "region_code": "1730242",
+ "region_name": "Yozyovon tumani",
+ "daily_count": 1101,
+ "cumulative_count": 9772
+},{
+ "region_code": "1730401",
+ "region_name": "Fargʻona shahri",
+ "daily_count": 3000,
+ "cumulative_count": 37850
+},{
+ "region_code": "1730405",
+ "region_name": "Qoʻqon shahri",
+ "daily_count": 3092,
+ "cumulative_count": 23400
+},{
+ "region_code": "1730408",
+ "region_name": "Quvasoy shahri",
+ "daily_count": 1081,
+ "cumulative_count": 9600
+},{
+ "region_code": "1730412",
+ "region_name": "Margʻilon shahri",
+ "daily_count": 2215,
+ "cumulative_count": 17271
+                }
+            ]

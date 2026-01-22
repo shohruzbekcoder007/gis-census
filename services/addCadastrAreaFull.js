@@ -1,0 +1,115 @@
+import pool from '../startup/dbpg.js';
+import '../startup/db.js';
+import House1708 from '../models/house.model.js';
+
+const BATCH_SIZE = 1000;
+
+async function syncHouses1708() {
+    try {
+        console.log('Houses sinxronlash boshlandi...\n');
+
+        // PostgreSQL dan jami yozuvlar sonini olish
+        const countResult = await pool.query('SELECT COUNT(*) as total FROM admin.all_viloyats_merged');
+        const totalRecords = parseInt(countResult.rows[0].total);
+        console.log(`PostgreSQL da jami ${totalRecords} ta yozuv mavjud.\n`);
+
+        if (totalRecords === 0) {
+            console.log('Ko\'chirish uchun ma\'lumot yo\'q.');
+            return;
+        }
+
+        // MongoDB dagi mavjud yozuvlarni tekshirish
+        const existingCount = await House1708.countDocuments();
+        console.log(`MongoDB da mavjud: ${existingCount} ta yozuv.\n`);
+
+        let offset = 0;
+        let totalInserted = 0;
+        let batchNum = 0;
+
+        while (offset < totalRecords) {
+            batchNum++;
+            console.log(`Batch ${batchNum}: ${offset} - ${Math.min(offset + BATCH_SIZE, totalRecords)}`);
+
+            // PostgreSQL dan batch olish
+            const query = `
+                SELECT
+                    gid,
+                    viloyat_code,
+                    tuman_code,
+                    mahalla_tin,
+                    cadastral_number,
+                    street_name,
+                    building_number,
+                    use_type,
+                    external_id,
+                    geom::text as geometry,
+                    centroid::text as centroid,
+                    area_m2
+                FROM admin.all_viloyats_merged
+                ORDER BY gid ASC
+                LIMIT $1 OFFSET $2
+            `;
+            const result = await pool.query(query, [BATCH_SIZE, offset]);
+
+            if (result.rows.length === 0) {
+                break;
+            }
+
+            // Ma'lumotlarni MongoDB formatiga o'tkazish
+            const houses = result.rows.map(row => ({
+                gid: row.gid,
+                viloyat_code: parseInt(row.viloyat_code) || null,
+                tuman_code: parseInt(row.tuman_code) || null,
+                mahalla_tin: parseInt(row.mahalla_tin) || null,
+                cadastral_number: row.cadastral_number,
+                street_name: row.street_name,
+                building_number: row.building_number,
+                use_type: row.use_type,
+                external_id: parseInt(row.external_id) || null,
+                geometry: row.geometry,
+                centroid: row.centroid,
+                area_m2: row.area_m2
+            }));
+
+            // MongoDB ga upsert qilish
+            const operations = houses.map(house => ({
+                updateOne: {
+                    filter: { gid: house.gid },
+                    update: { $set: house },
+                    upsert: true
+                }
+            }));
+
+            try {
+                const bulkResult = await House1708.bulkWrite(operations, { ordered: false });
+                const inserted = bulkResult.upsertedCount;
+                const updated = bulkResult.modifiedCount;
+                totalInserted += inserted;
+                console.log(`  - ${inserted} ta yangi, ${updated} ta yangilandi`);
+            } catch (err) {
+                console.error(`  - Xatolik: ${err.message}`);
+            }
+
+            offset += BATCH_SIZE;
+        }
+
+        console.log(`\n✅ Sinxronlash tugadi!`);
+        console.log(`   Jami ko'chirilgan: ${totalInserted} ta yozuv`);
+
+    } catch (err) {
+        console.error('Xatolik:', err.message);
+        throw err;
+    }
+}
+
+async function main() {
+    try {
+        await syncHouses1708();
+        process.exit(0);
+    } catch (err) {
+        console.error('Dastur xatosi:', err);
+        process.exit(1);
+    }
+}
+
+main();
