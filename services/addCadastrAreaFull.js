@@ -1,20 +1,39 @@
 import pool from '../startup/dbpg.js';
 import '../startup/db.js';
 import House1708 from '../models/house.model.js';
+import mongoose from 'mongoose';
 
 const BATCH_SIZE = 1000;
+
+// Sync pointer schema
+const syncPointerSchema = new mongoose.Schema({
+    sync_name: { type: String, required: true, unique: true },
+    last_gid: { type: Number, default: 0 }
+});
+
+const SyncPointer = mongoose.model('sync_pointer_house', syncPointerSchema);
 
 async function syncHouses1708() {
     try {
         console.log('Houses sinxronlash boshlandi...\n');
+        
+        // Pointer'dan oxirgi gid ni olish
+        let pointer = await SyncPointer.findOne({ sync_name: 'house_sync' });
+        if (!pointer) {
+            pointer = new SyncPointer({ sync_name: 'house_sync', last_gid: 0 });
+            await pointer.save();
+        }
+
+        const lastGid = pointer.last_gid;
+        console.log(`Oxirgi ko'chirilgan gid: ${lastGid}\n`);
 
         // PostgreSQL dan jami yozuvlar sonini olish
-        const countResult = await pool.query('SELECT COUNT(*) as total FROM admin.all_viloyats_merged');
+        const countResult = await pool.query('SELECT COUNT(*) as total FROM admin.all_viloyats_merged WHERE gid > $1', [lastGid]);
         const totalRecords = parseInt(countResult.rows[0].total);
-        console.log(`PostgreSQL da jami ${totalRecords} ta yozuv mavjud.\n`);
+        console.log(`PostgreSQL da ko'chirilishi kerak: ${totalRecords} ta yozuv.\n`);
 
         if (totalRecords === 0) {
-            console.log('Ko\'chirish uchun ma\'lumot yo\'q.');
+            console.log('Ko\'chirish uchun yangi ma\'lumot yo\'q.');
             return;
         }
 
@@ -22,15 +41,14 @@ async function syncHouses1708() {
         const existingCount = await House1708.countDocuments();
         console.log(`MongoDB da mavjud: ${existingCount} ta yozuv.\n`);
 
-        let offset = 0;
         let totalInserted = 0;
         let batchNum = 0;
+        let currentGid = lastGid;
 
-        while (offset < totalRecords) {
+        while (true) {
             batchNum++;
-            console.log(`Batch ${batchNum}: ${offset} - ${Math.min(offset + BATCH_SIZE, totalRecords)}`);
 
-            // PostgreSQL dan batch olish
+            // PostgreSQL dan batch olish (cursor - last_gid dan keyin)
             const query = `
                 SELECT
                     gid,
@@ -46,10 +64,13 @@ async function syncHouses1708() {
                     centroid::text as centroid,
                     area_m2
                 FROM admin.all_viloyats_merged
+                WHERE gid > $1
                 ORDER BY gid ASC
-                LIMIT $1 OFFSET $2
+                LIMIT $2
             `;
-            const result = await pool.query(query, [BATCH_SIZE, offset]);
+            const result = await pool.query(query, [currentGid, BATCH_SIZE]);
+
+            console.log(`Batch ${batchNum}: gid > ${currentGid} - ${result.rows.length} ta yozuv`);
 
             if (result.rows.length === 0) {
                 break;
@@ -86,11 +107,18 @@ async function syncHouses1708() {
                 const updated = bulkResult.modifiedCount;
                 totalInserted += inserted;
                 console.log(`  - ${inserted} ta yangi, ${updated} ta yangilandi`);
+
+                // Pointer'ni yangilash - oxirgi gid ni saqlash
+                if (result.rows.length > 0) {
+                    currentGid = result.rows[result.rows.length - 1].gid;
+                    await SyncPointer.updateOne(
+                        { sync_name: 'house_sync' },
+                        { last_gid: currentGid }
+                    );
+                }
             } catch (err) {
                 console.error(`  - Xatolik: ${err.message}`);
             }
-
-            offset += BATCH_SIZE;
         }
 
         console.log(`\n✅ Sinxronlash tugadi!`);

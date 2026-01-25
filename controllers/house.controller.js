@@ -100,7 +100,7 @@ const houseController = {
             //     });
             // }
 
-            const houses = await House.find({ mahalla_tin: tin });
+            const houses = await House.find({ mahalla_tin: tin }).select('-_id -__v -cadastral_number -area_m2');
             return res.json({
                 count: houses.length,
                 mahalla_tin: tin,
